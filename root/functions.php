@@ -25,7 +25,7 @@ function isAuth() {
 }
 
 function getRouter() {
-    return new \root\router();
+    return \root\router::getInstance();
 }
 
 function redirect($url) {

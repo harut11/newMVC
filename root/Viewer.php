@@ -6,7 +6,6 @@ class Viewer
 {
     private $page;
     private $title;
-    public $response = null;
 
     public function __construct($page, $title)
     {
@@ -18,15 +17,24 @@ class Viewer
     {
         $pageName = str_replace('.', SEPARATOR, $this->page);
 
-        $layout = BASE_PATH . SEPARATOR . 'app' . SEPARATOR . 'Views' . SEPARATOR . 'Layouts' . SEPARATOR. 'main.php';
-        $path =  BASE_PATH . SEPARATOR . 'app' . SEPARATOR . 'Views' . SEPARATOR . ucfirst($pageName) . '.php';
+        $layout = $this->callPage(BASE_PATH . SEPARATOR . 'app' . SEPARATOR . 'views' . SEPARATOR . 'layouts' . SEPARATOR. 'main.php');
+        $path = $this->callPage(BASE_PATH . SEPARATOR . 'app' . SEPARATOR . 'views' . SEPARATOR . $pageName . '.php');
 
-        $this->response = str_replace('@yield', $path, $layout);
-        $this->response = str_replace('@title', $this->title, $this->response);
-        dd($this->response);
+        $content = str_replace('@yield', $path, $layout);
+        $response = str_replace('@title', $this->title, $content);
 
-        require $this->response;
+        echo $response;
     }
 
+    protected function callPage($page)
+    {
+        ob_start();
+        if (file_exists($page)) {
+            ob_start();
+            require $page;
+            return ob_get_clean();
+        }
+        return false;
+    }
 
 }

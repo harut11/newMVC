@@ -6,7 +6,7 @@ define('SEPARATOR', DIRECTORY_SEPARATOR);
 require BASE_PATH . SEPARATOR . 'root' . SEPARATOR . 'functions.php';
 
 spl_autoload_register(function ($className) {
-    $class = __DIR__ . SEPARATOR . $className . '.php';
+    $class = BASE_PATH . SEPARATOR . $className . '.php';
    if(file_exists($class)) {
        ob_start();
        require_once $class;

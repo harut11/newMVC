@@ -4,13 +4,13 @@ namespace app\Controllers;
 
 class AuthController
 {
-    public function __construct()
-    {
-
-    }
-
     public function login()
     {
-        view('home.index', 'Hello World!');
+        echo view('auth.login', 'Welcome to Login page!');
+    }
+
+    public function register()
+    {
+        echo view('auth.register', 'Welcome to Register page!');
     }
 }
