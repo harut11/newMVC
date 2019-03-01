@@ -32,3 +32,11 @@ function redirect($url) {
     header('Location: ' . $url);
     exit();
 }
+
+function get_connection() {
+    return \root\Database\db::getInstance();
+}
+
+function session_get($key, $value) {
+    return isset($_SESSION[$key][$value]) ? $_SESSION[$key][$value] : null;
+}

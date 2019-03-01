@@ -2,7 +2,9 @@
 
 namespace app\Controllers;
 
-class HomeController
+use root\forValidation;
+
+class HomeController extends forValidation
 {
     public function index()
     {

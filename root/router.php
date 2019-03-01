@@ -2,18 +2,13 @@
 
 namespace root;
 
-use app\Controllers\HomeController;
-use app\Controllers\AuthController;
-
 class router
 {
     private static $instance = null;
 
     private function __construct()
     {
-        $action = $this->getAction();
-        $result = $this->setController();
-        return $result->$action();
+        return $this->getAction();
     }
 
     public static function getInstance()
@@ -24,33 +19,35 @@ class router
         return self::$instance;
     }
 
-    private function setController()
+    private function setController($action)
     {
-        $action = $this->getAction();
-        $controller = null;
+        $controllerName = null;
 
         switch ($action) {
             case 'index':
-                $controller = new HomeController();
+                session_unset();
+                $controllerName = 'Home';
                 break;
             case 'login':
-                $controller = new AuthController();
+                $controllerName = 'Auth';
                 break;
             case 'register':
-                $controller =  new AuthController();
+                $controllerName =  'Auth';
                 break;
-            default:
+            case 'registersubmit':
+                $controllerName = 'Auth';
                 break;
         }
-        return $controller;
+        $controller = "\\app\\Controllers\\{$controllerName}Controller";
+        return new $controller();
     }
 
     private function getAction()
     {
         $uri = $_SERVER['REQUEST_URI'];
         $path = explode('/', parse_url($uri, PHP_URL_PATH));
-        $action = $path[1] ? $path[1] : 'index';
+        $action = $path[1] ? strtolower($path[1]) : 'index';
 
-        return strtolower($action);
+        return $this->setController($action)->$action();
     }
 }
