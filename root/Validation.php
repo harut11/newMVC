@@ -2,6 +2,8 @@
 
 namespace root;
 
+use app\Models\users;
+
 class Validation
 {
     public $errors = [];
@@ -41,19 +43,25 @@ class Validation
     {
         switch ($rule) {
             case 'required':
-                return !empty($field);
+                return !empty($request[$field]);
                 break;
             case 'min':
-                return isset($request[$field]) && $request[$field] >= $attr;
+                return isset($request[$field]) && strlen($request[$field]) >= $attr;
                 break;
             case 'max':
-                return isset($request[$field]) && $request[$field] <= $attr;
+                return isset($request[$field]) && strlen($request[$field]) <= $attr;
             case 'email':
                 $pattern = '/[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,20})/';
-                return isset($request[$field]) && !preg_match($pattern, $request[$field]);
+                return isset($request[$field]) && preg_match($pattern, $request[$field]);
             case 'string':
                 $pattern = '/^(([A-Za-z]+[\s]{1}[A-Za-z]+)|([A-Za-z]+))$/';
                 return isset($request[$field]) && preg_match($pattern, $request[$field]);
+            case 'unique':
+                return !users::query()->where($field, '=', $request[$field])->getAll();
+                break;
+            case 'confirm':
+                return $request[$field] === $_REQUEST['password'];
+                break;
             default:
                 return true;
                 break;

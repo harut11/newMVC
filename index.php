@@ -12,7 +12,7 @@ spl_autoload_register(function ($className) {
    if(file_exists($class)) {
        require_once $class;
    } else {
-       echo 'Class not found';
+       redirect('/');
        exit();
    }
 });

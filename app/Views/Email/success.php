@@ -1,0 +1,1 @@
+<h3>Please check your email and verify it</h3>

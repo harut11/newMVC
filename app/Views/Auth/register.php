@@ -20,14 +20,14 @@
     <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password"
-               value="">
-        <small class="form-text text-danger"></small>
+               value="<?=session_get('old', 'password')?>">
+        <small class="form-text text-danger"><?=session_get('errors', 'password')?></small>
     </div>
     <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
         <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password"
-               name="confirm_password" value="">
-        <small class="form-text text-danger"></small>
+               name="confirm_password" value="<?=session_get('old', 'confirm_password')?>">
+        <small class="form-text text-danger"><?=session_get('errors', 'confirm_password')?></small>
     </div>
     <button type="submit" class="btn btn-info mt-3">Register</button>
 </form>

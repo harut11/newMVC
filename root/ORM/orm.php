@@ -27,8 +27,30 @@ class orm
         return $this->execute();
     }
 
+    public function create($request)
+    {
+        $values = '';
+        $columns = '';
+
+        foreach ($request as $key => $value) {
+            $values .= "'$value'" . ', ';
+            $columns .= $key . ', ';
+        }
+        $this->sql = "INSERT INTO " . $this->getTable() . " (" . substr($columns, 0, -2) . ")" . " VALUES " . "(" . substr($values, 0, -2) .")";
+
+        return $this->execute();
+    }
+
+    public function update()
+    {
+//        $this->sql = "UPDATE " . $this->getTable() . " SET " .
+    }
+
     public function where($left, $operator, $right)
     {
+        if (is_string($right)) {
+            $right = "'$right'";
+        }
         $this->where[] = " WHERE $left $operator $right";
         return $this;
     }

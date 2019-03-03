@@ -1,0 +1,1 @@
+<h3>Email is already verified</h3>

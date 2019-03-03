@@ -37,6 +37,9 @@ class router
             case 'registersubmit':
                 $controllerName = 'Auth';
                 break;
+            case 'verify':
+                $controllerName = 'Auth';
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();
