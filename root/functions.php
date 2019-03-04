@@ -47,8 +47,20 @@ function get_connection() {
     return \root\Database\db::getInstance();
 }
 
-function session_get($key, $value) {
-    return isset($_SESSION[$key][$value]) ? $_SESSION[$key][$value] : null;
+function session_get($key, $value = null) {
+    if ($value !== null) {
+        return isset($_SESSION[$key][$value]) ? $_SESSION[$key][$value] : null;
+    } else {
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+    }
+
+}
+
+function cookie_get($key) {
+    if (isset($_COOKIE[$key])) {
+        return true;
+    }
+    return false;
 }
 
 function bcrypt($text) {
@@ -73,8 +85,19 @@ function send_email($email, $token) {
 
 function middleware($condition) {
     switch ($condition) {
+        case 'guest':
+            if(!isAuth()) {
+                return true;
+            }
+            redirect('/');
+            return false;
+            break;
         case 'auth':
-            return isAuth();
+            if(isAuth()) {
+                return true;
+            }
+            redirect('/');
+            return false;
             break;
         default:
             return true;

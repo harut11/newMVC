@@ -1,6 +1,15 @@
-<div class="alert alert-success w-50 mx-auto" role="alert" id="login_message">
-
+<?php if(cookie_get('username')) : ?>
+<div class="alert alert-success w-50 mx-auto" role="alert">
+    <?= $_COOKIE['username'] . " please verify your email before log in" ?>
 </div>
+<?php endif; ?>
+
+<?php if(cookie_get('must_verify')) : ?>
+    <div class="alert alert-danger w-50 mx-auto" role="alert">
+        <?= "Your email is not verified" ?>
+    </div>
+<?php endif; ?>
+
 <form class="w-25 mx-auto" action="/loginsubmit" method="post">
     <div class="form-group">
         <label for="Email2">Email address</label>

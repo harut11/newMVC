@@ -27,24 +27,31 @@ class router
             case 'index':
                 unset($_SESSION['errors']);
                 unset($_SESSION['old']);
+                setcookie('username', '', time() - 3600);
+                setcookie('must_verify', '', time() - 3600);
                 $controllerName = 'Home';
                 break;
             case 'login':
+                middleware('guest');
                 $controllerName = 'Auth';
                 break;
             case 'register':
+                middleware('guest');
                 $controllerName =  'Auth';
                 break;
             case 'registersubmit':
+                middleware('guest');
                 $controllerName = 'Auth';
                 break;
             case 'loginsubmit':
+                middleware('guest');
                 $controllerName = 'Auth';
                 break;
             case 'verify':
                 $controllerName = 'Auth';
                 break;
             case 'logout':
+                middleware('auth');
                 $controllerName = 'Auth';
                 break;
         }

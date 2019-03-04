@@ -19,8 +19,8 @@ class AuthController extends forValidation
 
     public function registersubmit()
     {
-        if(isset($_REQUEST['first_name'])) {
-            $this->validate($_REQUEST, [
+        if(isset($_POST)) {
+            $this->validate($_POST, [
                 'first_name' => 'required|min:3|max:40|string',
                 'last_name' => 'required|min:4|max:50|string',
                 'email' => 'required|email|unique',
@@ -31,18 +31,20 @@ class AuthController extends forValidation
             $token = generate_token();
 
             users::query()->create([
-                'first_name' => trim($_REQUEST['first_name']),
-                'last_name' => trim($_REQUEST['last_name']),
-                'email' => trim($_REQUEST['email']),
-                'password' => trim(bcrypt($_REQUEST['password'])),
+                'first_name' => trim($_POST['first_name']),
+                'last_name' => trim($_POST['last_name']),
+                'email' => trim($_POST['email']),
+                'password' => trim(bcrypt($_POST['password'])),
                 'email_verified' => $token
             ]);
 
-            $user = users::query()->where('email_verified', '=', $token)->getAll();
-
             send_email($_REQUEST['email'], $token);
 
-            if ($user) echo json_encode($user);
+            $user = users::query()->where('email_verified', '=', $token)->get('first_name');
+            $cookie_name = 'username';
+            setcookie($cookie_name, $user[0]['first_name'], time() + 3600);
+
+            redirect('/login');
         }
 
     }
@@ -67,6 +69,7 @@ class AuthController extends forValidation
 
             redirect('/');
         }
+        setcookie('must_verify', 'status', time() + 3600);
         redirect('/login');
     }
 
@@ -75,16 +78,20 @@ class AuthController extends forValidation
         $url = $_SERVER['REQUEST_URI'];
         $token = explode('token=', parse_url($url, PHP_URL_QUERY));
 
-        $user = users::query()->where('email_verified', '=', $token[1])->getAll();
+        if(parse_url($url, PHP_URL_QUERY)) {
+            $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
-        if (!$user) {
-            return view('email.verified', 'Verification Message');
-        } else {
-            users::query()->where('email_verified', '=', $token[1])->update([
-                'email_verified' => null
-            ]);
-            return view('email.success', 'Verification Message');
+            if (!$user) {
+                return view('email.verified', 'Verification Message');
+            } else {
+                users::query()->where('email_verified', '=', $token[1])->update([
+                    'email_verified' => null
+                ]);
+                return view('email.success', 'Verification Message');
+            }
         }
+        redirect('/');
+        return false;
     }
 
     public function logout()

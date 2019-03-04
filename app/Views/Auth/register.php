@@ -1,4 +1,4 @@
-<form class="w-50 mx-auto">
+<form class="w-50 mx-auto" action="/registersubmit" method="post">
     <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" class="form-control type-text" id="firstName"
