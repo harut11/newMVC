@@ -27,6 +27,16 @@ class orm
         return $this->execute();
     }
 
+    public function get($what)
+    {
+        $condition = null;
+        $condition = $this->addConditions($condition);
+
+        $this->sql = "SELECT $what FROM " . $this->getTable() . $condition;
+
+        return $this->execute();
+    }
+
     public function create($request)
     {
         $values = '';
@@ -36,14 +46,26 @@ class orm
             $values .= "'$value'" . ', ';
             $columns .= $key . ', ';
         }
+
         $this->sql = "INSERT INTO " . $this->getTable() . " (" . substr($columns, 0, -2) . ")" . " VALUES " . "(" . substr($values, 0, -2) .")";
 
         return $this->execute();
     }
 
-    public function update()
+    public function update($data)
     {
-//        $this->sql = "UPDATE " . $this->getTable() . " SET " .
+        $sets = '';
+        foreach ($data as $column => $value) {
+            if (!is_int($value)) {
+                $value = "'$value'";
+            }
+
+            $sets .= "$column = $value";
+        }
+
+        $this->sql = "UPDATE " . $this->getTable() . " SET " . $sets . implode(', ', $this->where);
+
+        return $this->execute();
     }
 
     public function where($left, $operator, $right)
@@ -72,6 +94,15 @@ class orm
         $table = explode('\\', get_called_class());
          return $table[count($table) - 1];
 
+    }
+
+    public function addConditions($condition)
+    {
+        !empty($this->where) ? $condition .= $this->where[0] : $condition .= '';
+        !empty($this->order) ? $condition .= $this->order : $condition .= '';
+        !empty($this->offset) ? $condition .= $this->offset : $condition .= '';
+
+        return $condition;
     }
 
     public function execute()

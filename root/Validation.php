@@ -41,26 +41,34 @@ class Validation
 
     public function validateField($request, $rule, $attr, $field)
     {
+        $value = trim($request[$field]);
         switch ($rule) {
             case 'required':
-                return !empty($request[$field]);
+                return !empty($value);
                 break;
             case 'min':
-                return isset($request[$field]) && strlen($request[$field]) >= $attr;
+                return isset($value) && strlen($value) >= $attr;
                 break;
             case 'max':
-                return isset($request[$field]) && strlen($request[$field]) <= $attr;
+                return isset($value) && strlen($value) <= $attr;
             case 'email':
                 $pattern = '/[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,20})/';
-                return isset($request[$field]) && preg_match($pattern, $request[$field]);
+                return isset($value) && preg_match($pattern, $value);
             case 'string':
                 $pattern = '/^(([A-Za-z]+[\s]{1}[A-Za-z]+)|([A-Za-z]+))$/';
-                return isset($request[$field]) && preg_match($pattern, $request[$field]);
+                return isset($value) && preg_match($pattern, $value);
             case 'unique':
-                return !users::query()->where($field, '=', $request[$field])->getAll();
+                return !users::query()->where($field, '=', $value)->getAll();
                 break;
             case 'confirm':
-                return $request[$field] === $_REQUEST['password'];
+                return $value === $_REQUEST['password'];
+            case 'exists':
+                $right = $request[$field];
+
+                if ($field = 'password') {
+                    $right = bcrypt($request[$field]);
+                }
+                return users::query()->where($field, '=', $right)->getAll();
                 break;
             default:
                 return true;

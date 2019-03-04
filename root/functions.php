@@ -18,8 +18,18 @@ function view($page, $title) {
 }
 
 function isAuth() {
-    if(10 > 0) {
-        return true;
+    $session_token = isset($_SESSION['access_token']) ? $_SESSION['access_token'] : null;
+    $user = null;
+    $email_verified = null;
+
+    if ($session_token) {
+        $email_verified = \app\Models\users::query()->where('access_token', '=', $session_token)
+            ->get('email_verified');
+
+        if($email_verified[0]['email_verified'] === '') {
+            return true;
+        }
+        return false;
     }
     return false;
 }
@@ -59,4 +69,15 @@ function generate_token($length = 40) {
 function send_email($email, $token) {
     $mailer =  new \root\mailer($email, $token);
     return $mailer->sendEmail();
+}
+
+function middleware($condition) {
+    switch ($condition) {
+        case 'auth':
+            return isAuth();
+            break;
+        default:
+            return true;
+            break;
+    }
 }

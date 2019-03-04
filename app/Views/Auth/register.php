@@ -1,4 +1,4 @@
-<form class="w-50 mx-auto" action="/registersubmit" method="post">
+<form class="w-50 mx-auto">
     <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" class="form-control type-text" id="firstName"
@@ -29,5 +29,5 @@
                name="confirm_password" value="<?=session_get('old', 'confirm_password')?>">
         <small class="form-text text-danger"><?=session_get('errors', 'confirm_password')?></small>
     </div>
-    <button type="submit" class="btn btn-info mt-3">Register</button>
+    <button type="submit" class="btn btn-info mt-3" id="register">Register</button>
 </form>

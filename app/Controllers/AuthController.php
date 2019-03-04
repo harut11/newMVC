@@ -19,26 +19,55 @@ class AuthController extends forValidation
 
     public function registersubmit()
     {
+        if(isset($_REQUEST['first_name'])) {
+            $this->validate($_REQUEST, [
+                'first_name' => 'required|min:3|max:40|string',
+                'last_name' => 'required|min:4|max:50|string',
+                'email' => 'required|email|unique',
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|min:6|confirm'
+            ]);
+
+            $token = generate_token();
+
+            users::query()->create([
+                'first_name' => trim($_REQUEST['first_name']),
+                'last_name' => trim($_REQUEST['last_name']),
+                'email' => trim($_REQUEST['email']),
+                'password' => trim(bcrypt($_REQUEST['password'])),
+                'email_verified' => $token
+            ]);
+
+            $user = users::query()->where('email_verified', '=', $token)->getAll();
+
+            send_email($_REQUEST['email'], $token);
+
+            if ($user) echo json_encode($user);
+        }
+
+    }
+
+    public function loginsubmit()
+    {
         $this->validate($_REQUEST, [
-            'first_name' => 'required|min:3|max:40|string',
-            'last_name' => 'required|min:4|max:50|string',
-            'email' => 'required|email|unique',
-            'password' => 'required|min:6',
-            'confirm_password' => 'required|min:6|confirm'
+           'email' => 'required|exists:users',
+           'password' => 'required|exists:users'
         ]);
 
-        $token = generate_token();
+        $email_verified = users::query()->where('email', '=', $_REQUEST['email'])
+            ->get('email_verified');
 
-        users::query()->create([
-            'first_name' => $_REQUEST['first_name'],
-            'last_name' => $_REQUEST['last_name'],
-            'email' => $_REQUEST['email'],
-            'password' => bcrypt($_REQUEST['password']),
-            'email_verified' => $token
-        ]);
+        if ($email_verified[0]['email_verified'] === '') {
+            $token = generate_token();
+            users::query()->where('email', '=', $_REQUEST['email'])->update([
+                'access_token' => $token
+            ]);
 
-        send_email($_REQUEST['email'], $token);
-        redirect('/');
+            $_SESSION['access_token'] = $token;
+
+            redirect('/');
+        }
+        redirect('/login');
     }
 
     public function verify()
@@ -49,9 +78,20 @@ class AuthController extends forValidation
         $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
         if (!$user) {
-            return view('email.success', 'Verification Message');
-        } else {
             return view('email.verified', 'Verification Message');
+        } else {
+            users::query()->where('email_verified', '=', $token[1])->update([
+                'email_verified' => null
+            ]);
+            return view('email.success', 'Verification Message');
         }
+    }
+
+    public function logout()
+    {
+        if(isset($_SESSION['access_token'])) {
+            unset($_SESSION['access_token']);
+            redirect('/');
+        } else return null;
     }
 }

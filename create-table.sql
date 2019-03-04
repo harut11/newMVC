@@ -5,6 +5,7 @@ CREATE TABLE users (
   email VARCHAR (255) NOT NULL UNIQUE,
   password varchar (255) NOT NULL,
   email_verified varchar (255),
+  access_token varchar (255),
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now()
 );

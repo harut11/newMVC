@@ -11,7 +11,7 @@ class forValidation
         if ($errors) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $request;
-            redirect('/register');
+            redirect($_SERVER['HTTP_REFERER']);
         }
         return true;
     }

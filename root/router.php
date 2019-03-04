@@ -25,7 +25,8 @@ class router
 
         switch ($action) {
             case 'index':
-                session_unset();
+                unset($_SESSION['errors']);
+                unset($_SESSION['old']);
                 $controllerName = 'Home';
                 break;
             case 'login':
@@ -37,7 +38,13 @@ class router
             case 'registersubmit':
                 $controllerName = 'Auth';
                 break;
+            case 'loginsubmit':
+                $controllerName = 'Auth';
+                break;
             case 'verify':
+                $controllerName = 'Auth';
+                break;
+            case 'logout':
                 $controllerName = 'Auth';
                 break;
         }
