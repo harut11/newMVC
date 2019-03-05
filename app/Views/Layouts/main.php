@@ -51,8 +51,16 @@
         <?php endif; ?>
         <?php if(isAuth()): ?>
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Profile</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Profile
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">p1</a>
+                        <a class="dropdown-item" href="#">p2</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item small" href="/deleteaccount">Delete account!</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Logout</a>

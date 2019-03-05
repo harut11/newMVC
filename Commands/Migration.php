@@ -55,7 +55,7 @@ class Migration extends Command
 
             $text = 'Table created successfully';
         } else {
-            $text = 'Please fix errors before make migration!';
+            $text = 'Table name is required';
         }
 
         if ($input->getOption($this->commandOptionName)) {

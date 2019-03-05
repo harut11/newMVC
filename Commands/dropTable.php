@@ -45,7 +45,7 @@ class dropTable extends Command
 
             $text = 'Table deleted successfully!';
         } else {
-            $text = 'Please fix errors before make command!';
+            $text = 'Table Name is required';
         }
 
         if ($input->getOption($this->commandOptionName)) {

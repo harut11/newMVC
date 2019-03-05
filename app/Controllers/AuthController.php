@@ -66,6 +66,7 @@ class AuthController extends forValidation
             ]);
 
             $_SESSION['access_token'] = $token;
+            $_SESSION['user_email'] = $_REQUEST['email'];
             redirect('/');
         } else if($email_verified && $email_verified[0]['email_verified'] !== '') {
             setcookie('must_verify', 'status', time() + 3600);
@@ -98,9 +99,20 @@ class AuthController extends forValidation
 
     public function logout()
     {
-        if(isset($_SESSION['access_token'])) {
+        if(isset($_SESSION['access_token']) || isset($_SESSION['user_email'])) {
             unset($_SESSION['access_token']);
+            unset($_SESSION['user_email']);
             redirect('/');
         } else return null;
+    }
+
+    public function deleteaccount()
+    {
+        if(isset($_SESSION['access_token']) && isset($_SESSION['user_email'])) {
+            users::query()->where('email', '=', $_SESSION['user_email'])->delete();
+            session_unset();
+            redirect('/');
+        }
+        return false;
     }
 }

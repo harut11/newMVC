@@ -65,6 +65,13 @@ class orm
         return $this->execute();
     }
 
+    public function delete()
+    {
+        $this->sql = "DELETE FROM " . $this->getTable() . $this->where[0];
+
+        return $this->execute();
+    }
+
     public function where($left, $operator, $right)
     {
         if (is_string($right)) {

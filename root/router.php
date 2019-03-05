@@ -56,6 +56,10 @@ class router
                 middleware('auth');
                 $controllerName = 'Auth';
                 break;
+            case 'deleteaccount':
+                middleware('auth');
+                $controllerName = "Auth";
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();
