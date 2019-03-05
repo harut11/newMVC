@@ -83,6 +83,12 @@ function send_email($email, $token) {
     return $mailer->sendEmail();
 }
 
+function get_avatar_name($user_id) {
+    $avatar = \app\Models\images::query()->where('user_id', '=', $user_id)->getAll();
+
+    return $avatar['name'];
+}
+
 function middleware($condition) {
     switch ($condition) {
         case 'guest':
