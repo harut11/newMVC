@@ -24,12 +24,12 @@ class mailer
         try {
             $mail->SMTPDebug = 2;
             $mail->isSMTP();
-            $mail->Host = 'smtp.mailtrap.io';
+            $mail->Host = MAILTRAP_HOST;
             $mail->SMTPAuth = true;
-            $mail->Username = '2d3a8fd5f267af';
-            $mail->Password = 'c05b56ef0a416d';
+            $mail->Username = MAILTRAP_USERNAME;
+            $mail->Password = MAILTRAP_PASSWORD;
             $mail->SMTPSecure = 'tls';
-            $mail->Port = 2525;
+            $mail->Port = MAILTRAP_PORT;
 
             //Recipients
             $mail->setFrom('admin@newmvc.local', 'Admin');

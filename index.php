@@ -4,6 +4,7 @@ define('BASE_PATH', dirname(__FILE__));
 define('SEPARATOR', DIRECTORY_SEPARATOR);
 
 require BASE_PATH . SEPARATOR . 'root' . SEPARATOR . 'functions.php';
+require BASE_PATH . SEPARATOR . 'root' . SEPARATOR . 'configs.php';
 
 session_start();
 
