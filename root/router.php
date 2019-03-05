@@ -29,6 +29,8 @@ class router
                 unset($_SESSION['old']);
                 setcookie('username', '', time() - 3600);
                 setcookie('must_verify', '', time() - 3600);
+                setcookie('email_verified_success', '', time() - 3600);
+                setcookie('email_already_verified', '', time() - 3600);
                 $controllerName = 'Home';
                 break;
             case 'login':

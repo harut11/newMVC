@@ -1,1 +1,0 @@
-<h3>Your email is successfully verified</h3>

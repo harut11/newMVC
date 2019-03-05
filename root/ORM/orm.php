@@ -16,11 +16,8 @@ class orm
 
     public function getAll()
     {
-        $condition = '';
-
-        !empty($this->where) ? $condition .= $this->where[0] : $condition .= '';
-        !empty($this->order) ? $condition .= $this->order : $condition .= '';
-        !empty($this->offset) ? $condition .= $this->offset : $condition .= '';
+        $condition = null;
+        $condition = $this->addConditions($condition);
 
         $this->sql = "SELECT * FROM " . $this->getTable() . $condition;
 

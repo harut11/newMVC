@@ -19,8 +19,8 @@ class AuthController extends forValidation
 
     public function registersubmit()
     {
-        if(isset($_POST)) {
-            $this->validate($_POST, [
+        if(isset($_REQUEST['first_name'])) {
+            $this->validate($_REQUEST, [
                 'first_name' => 'required|min:3|max:40|string',
                 'last_name' => 'required|min:4|max:50|string',
                 'email' => 'required|email|unique',
@@ -31,10 +31,10 @@ class AuthController extends forValidation
             $token = generate_token();
 
             users::query()->create([
-                'first_name' => trim($_POST['first_name']),
-                'last_name' => trim($_POST['last_name']),
-                'email' => trim($_POST['email']),
-                'password' => trim(bcrypt($_POST['password'])),
+                'first_name' => trim($_REQUEST['first_name']),
+                'last_name' => trim($_REQUEST['last_name']),
+                'email' => trim($_REQUEST['email']),
+                'password' => trim(bcrypt($_REQUEST['password'])),
                 'email_verified' => $token
             ]);
 
@@ -46,7 +46,7 @@ class AuthController extends forValidation
 
             redirect('/login');
         }
-
+        redirect('/');
     }
 
     public function loginsubmit()
@@ -82,12 +82,14 @@ class AuthController extends forValidation
             $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
             if (!$user) {
-                return view('email.verified', 'Verification Message');
+                setcookie('email_already_verified', 'true', time() + 3600);
+                return redirect('/login');
             } else {
                 users::query()->where('email_verified', '=', $token[1])->update([
                     'email_verified' => null
                 ]);
-                return view('email.success', 'Verification Message');
+                setcookie('email_verified_success', 'true', time() + 3600);
+                return redirect('/login');
             }
         }
         redirect('/');
