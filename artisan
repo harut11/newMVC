@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+use \Symfony\Component\Console\Application;
+
+spl_autoload_register(function ($className) {
+    $class = __DIR__ . DIRECTORY_SEPARATOR . $className . '.php';
+   if(file_exists($class)) {
+       require_once $class;
+   } else {
+       redirect('/');
+       exit();
+   }
+});
+
+require __DIR__ . '/root/functions.php';
+require __DIR__ . '/root/configs.php';
+require __DIR__ . '/vendor/autoload.php';
+
+$application = new Application();
+
+# add our commands
+$application->addCommands([new dropTable(), new Migration()]);
+
+$application->run();
