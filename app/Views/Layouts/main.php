@@ -56,7 +56,7 @@
                         Profile
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">p1</a>
+                        <a class="dropdown-item" href="#">Details</a>
                         <a class="dropdown-item" href="#">p2</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item small" href="/deleteaccount">Delete account!</a>

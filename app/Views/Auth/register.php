@@ -1,4 +1,10 @@
-<form class="w-50 mx-auto" action="/registersubmit" method="post">
+<form class="w-50 mx-auto" action="/registersubmit" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="thumbnail">First Name</label>
+        <input type="file" class="form-control type-text" id="thumbnail" name="thumbnail"
+               value="<?=session_get('old', 'first_name')?>">
+        <small class="form-text text-danger"><?=session_get('errors', 'first_name')?></small>
+    </div>
     <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" class="form-control type-text" id="firstName"
