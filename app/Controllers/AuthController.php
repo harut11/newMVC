@@ -52,22 +52,23 @@ class AuthController extends forValidation
     public function loginsubmit()
     {
         $this->validate($_REQUEST, [
-           'email' => 'required|email|exists:users',
+           'email' => 'required|exists:users',
            'password' => 'required|exists:users'
         ]);
 
         $email_verified = users::query()->where('email', '=', $_REQUEST['email'])
             ->get('email_verified');
 
-        if ($email_verified[0]['email_verified'] === '') {
+        if ($email_verified && $email_verified[0]['email_verified'] === '') {
             $token = generate_token();
             users::query()->where('email', '=', $_REQUEST['email'])->update([
                 'access_token' => $token
             ]);
 
             $_SESSION['access_token'] = $token;
-            setcookie('must_verify', 'status', time() + 3600);
             redirect('/');
+        } else if($email_verified && $email_verified[0]['email_verified'] !== '') {
+            setcookie('must_verify', 'status', time() + 3600);
         }
         redirect('/login');
     }

@@ -68,7 +68,8 @@ class Validation
                 if ($field = 'password') {
                     $right = bcrypt($request[$field]);
                 }
-                return users::query()->where($field, '=', $right)->getAll();
+                $user = users::query()->where('email', '=', $request['email'])->get('password');
+                return $user[0]['password'] === $right;
                 break;
             default:
                 return true;
