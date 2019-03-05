@@ -52,7 +52,7 @@ class AuthController extends forValidation
     public function loginsubmit()
     {
         $this->validate($_REQUEST, [
-           'email' => 'required|exists:users',
+           'email' => 'required|email|exists:users',
            'password' => 'required|exists:users'
         ]);
 
@@ -66,10 +66,9 @@ class AuthController extends forValidation
             ]);
 
             $_SESSION['access_token'] = $token;
-
+            setcookie('must_verify', 'status', time() + 3600);
             redirect('/');
         }
-        setcookie('must_verify', 'status', time() + 3600);
         redirect('/login');
     }
 

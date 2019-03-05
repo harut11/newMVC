@@ -19,13 +19,11 @@ class db
 
     private function __construct()
     {
-        $server = 'localhost';
-        $dbname = 'newmvc';
-        $userName = 'root';
-        $password = '';
+        $server = DB_SERVER;
+        $dbname = DB_NAME;
 
         try {
-            $this->PDO = new PDO("mysql:host=$server;dbname=$dbname", $userName, $password);
+            $this->PDO = new PDO("mysql:host=$server;dbname=$dbname", DB_USERNAME, DB_PASSWORD);
         } catch (\PDOException $e) {
             echo 'Connection error ' . $e->getMessage() . ' !';
             exit();
