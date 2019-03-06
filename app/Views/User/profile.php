@@ -7,7 +7,7 @@
     <tbody>
     <tr>
         <th scope="row">Avatar</th>
-        <td><img class="img-thumbnail" src="/public/uploads/<?=session_get('user_avatar', 'name')?>" alt="avatar">
+        <td><img class="img-thumbnail w-25" src="/public/uploads/<?=session_get('user_avatar', 'name')?>" alt="avatar">
         </td>
     </tr>
     <tr>

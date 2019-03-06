@@ -2,6 +2,8 @@
 
 namespace app\Controllers;
 
+use app\Models\users;
+
 class UserController
 {
     public function details()
@@ -12,5 +14,10 @@ class UserController
     public function allUsers()
     {
         return view('user.all', 'Welcome to all users page');
+    }
+
+    public function showUsers()
+    {
+        echo users::query()->getAll();
     }
 }
