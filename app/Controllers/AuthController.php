@@ -2,6 +2,7 @@
 
 namespace app\Controllers;
 
+use app\Models\images;
 use app\Models\users;
 use root\forValidation;
 
@@ -19,13 +20,14 @@ class AuthController extends forValidation
 
     public function registersubmit()
     {
-        if(isset($_REQUEST['first_name'])) {
-            $this->validate($_REQUEST, [
+        if(isset($_POST)) {
+            $this->validate($_REQUEST, $_FILES, [
                 'first_name' => 'required|min:3|max:40|string',
                 'last_name' => 'required|min:4|max:50|string',
                 'email' => 'required|email|unique',
                 'password' => 'required|min:6',
-                'confirm_password' => 'required|min:6|confirm'
+                'confirm_password' => 'required|min:6|confirm',
+                'avatar' => 'required|img'
             ]);
 
             $token = generate_token();
@@ -34,15 +36,20 @@ class AuthController extends forValidation
                 'first_name' => trim($_REQUEST['first_name']),
                 'last_name' => trim($_REQUEST['last_name']),
                 'email' => trim($_REQUEST['email']),
-                'password' => trim(bcrypt($_REQUEST['password'])),
+                'password' => trim(password_hash($_REQUEST['password'], PASSWORD_BCRYPT)),
                 'email_verified' => $token
+            ]);
+
+            $user_id = users::query()->where('email', '=', $_REQUEST['email'])->get('id');
+
+            images::query()->create([
+                'name' => upload_image(),
+                'user_id' => $user_id[0]['id']
             ]);
 
             send_email($_REQUEST['email'], $token);
 
-            $user = users::query()->where('email_verified', '=', $token)->get('first_name');
-            $cookie_name = 'username';
-            setcookie($cookie_name, $user[0]['first_name'], time() + 3600);
+            setcookie('username', $_REQUEST['first_name'], time() + 3600);
 
             redirect('/login');
         }
@@ -51,35 +58,33 @@ class AuthController extends forValidation
 
     public function loginsubmit()
     {
-        $this->validate($_REQUEST, [
-           'email' => 'required|exists:users',
-           'password' => 'required|exists:users'
+        $this->validate($_REQUEST, $_FILES, [
+           'email' => 'required|registered',
+           'password' => 'required|min:6'
         ]);
 
-        $email_verified = users::query()->where('email', '=', $_REQUEST['email'])
-            ->get('email_verified');
+        $user = users::query()->where('email', '=', $_REQUEST['email'])
+            ->getAll();
+        $user_avatar = images::query()->where('user_id', '=', $user[0]['id'])->get('name');
 
-        if ($email_verified && $email_verified[0]['email_verified'] === '') {
+        if ($user[0] && $user[0]['email_verified'] === '') {
             $token = generate_token();
             users::query()->where('email', '=', $_REQUEST['email'])->update([
                 'access_token' => $token
             ]);
 
-            $_SESSION['access_token'] = $token;
-            $_SESSION['user_email'] = $_REQUEST['email'];
+            $_SESSION['user_details'] = $user[0];
+            $_SESSION['user_avatar'] = $user_avatar[0];
             redirect('/');
-        } else if($email_verified && $email_verified[0]['email_verified'] !== '') {
+        } else if($user[0] && $user[0]['email_verified'] !== '') {
             setcookie('must_verify', 'status', time() + 3600);
         }
         redirect('/login');
     }
 
-    public function verify()
+    public function verify($token)
     {
-        $url = $_SERVER['REQUEST_URI'];
-        $token = explode('token=', parse_url($url, PHP_URL_QUERY));
-
-        if(parse_url($url, PHP_URL_QUERY)) {
+        if(isset($token)) {
             $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
             if (!$user) {
@@ -99,17 +104,17 @@ class AuthController extends forValidation
 
     public function logout()
     {
-        if(isset($_SESSION['access_token']) || isset($_SESSION['user_email'])) {
-            unset($_SESSION['access_token']);
-            unset($_SESSION['user_email']);
+        if(session_get('user_details', 'access_token')) {
+            session_unset();
             redirect('/');
         } else return null;
     }
 
     public function deleteaccount()
     {
-        if(isset($_SESSION['access_token']) && isset($_SESSION['user_email'])) {
-            users::query()->where('email', '=', $_SESSION['user_email'])->delete();
+        if((session_get('user_details', 'access_token'))) {
+            unlink('public/uploads/' . get_avatar_name(session_get('user_details', 'id')));
+            users::query()->where('email', '=', session_get('user_details', 'email'))->delete();
             session_unset();
             redirect('/');
         }

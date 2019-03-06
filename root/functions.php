@@ -18,15 +18,12 @@ function view($page, $title) {
 }
 
 function isAuth() {
-    $session_token = isset($_SESSION['access_token']) ? $_SESSION['access_token'] : null;
+    $session_token = isset($_SESSION['user_details']['access_token']) ? $_SESSION['user_details']['access_token'] : null;
     $user = null;
     $email_verified = null;
 
     if ($session_token) {
-        $email_verified = \app\Models\users::query()->where('access_token', '=', $session_token)
-            ->get('email_verified');
-
-        if($email_verified[0]['email_verified'] === '') {
+        if($_SESSION['user_details']['email_verified'] === '') {
             return true;
         }
         return false;
@@ -63,10 +60,6 @@ function cookie_get($key) {
     return false;
 }
 
-function bcrypt($text) {
-    return sha1($text);
-}
-
 function generate_token($length = 40) {
     $token = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $tokenlength = strlen($token);
@@ -84,9 +77,21 @@ function send_email($email, $token) {
 }
 
 function get_avatar_name($user_id) {
-    $avatar = \app\Models\images::query()->where('user_id', '=', $user_id)->getAll();
+    if (is_string($user_id)) {
+        $user_id = (int)$user_id;
+    }
+    $avatar = \app\Models\images::query()->where('user_id', '=', $user_id)->get('name');
+    return $avatar[0]['name'];
+}
 
-    return $avatar['name'];
+function upload_image() {
+    $name = $_FILES['avatar']['name'];
+    $extention = explode('.', $name);
+    $imgName = rand() . '.' . $extention[1];
+    $tmp = $_FILES['avatar']['tmp_name'];
+    $path = './public/uploads/' . $imgName;
+    move_uploaded_file($tmp, $path);
+    return $imgName;
 }
 
 function middleware($condition) {
@@ -106,7 +111,7 @@ function middleware($condition) {
             return false;
             break;
         default:
-            return true;
+            return false;
             break;
     }
 }

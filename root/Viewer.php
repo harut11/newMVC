@@ -28,7 +28,6 @@ class Viewer
 
     protected function callPage($page)
     {
-        ob_start();
         if (file_exists($page)) {
             ob_start();
             require $page;

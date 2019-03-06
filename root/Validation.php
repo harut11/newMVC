@@ -8,13 +8,23 @@ class Validation
 {
     public $errors = [];
 
-    public function __construct($request, $rules)
+    public function __construct($request, $files, $rules)
     {
         foreach ($request as $field => $value) {
             if (isset($rules[$field])) {
                 $error = $this->validateValues($request, $rules[$field], $field);
                 if($error) {
                     $this->errors[$field] = $error;
+                }
+            }
+        }
+        if (isset($files)) {
+            foreach ($files as $field => $value) {
+                if (isset($rules[$field])) {
+                    $error = $this->validateValues($files, $rules[$field], $field);
+                    if ($error) {
+                        $this->errors[$field] = $error;
+                    }
                 }
             }
         }
@@ -41,7 +51,12 @@ class Validation
 
     public function validateField($request, $rule, $attr, $field)
     {
-        $value = trim($request[$field]);
+        if (is_array($request[$field])) {
+            $value = $request[$field]['name'];
+        } else {
+            $value = trim($request[$field]);
+        }
+
         switch ($rule) {
             case 'required':
                 return !empty($value);
@@ -62,14 +77,13 @@ class Validation
                 break;
             case 'confirm':
                 return $value === $_REQUEST['password'];
-            case 'exists':
-                $right = $request[$field];
-
-                if ($field = 'password') {
-                    $right = bcrypt($request[$field]);
-                }
-                $user = users::query()->where('email', '=', $request['email'])->get('password');
-                return $user[0]['password'] === $right;
+            case 'registered':
+                $user = users::query()->where('email', '=', $request[$field])->get('password');
+                return password_verify($request['password'], $user[0]['password']);
+                break;
+            case 'img':
+                $imgType = explode('/', $_FILES['avatar']['type']);
+                return $imgType[0] === 'image';
                 break;
             default:
                 return true;
@@ -88,7 +102,8 @@ class Validation
             'email' => 'Email address is not valid',
             'unique' => 'The field must be unique value',
             'confirm' => 'Please enter a same password',
-            'exists' => 'Email or password are written wrong'
+            'registered' => 'Email or password are written wrong',
+            'img' => 'Image format are not valid'
         ];
 
         if (isset($message[$rule])) {

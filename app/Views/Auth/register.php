@@ -1,9 +1,9 @@
-<form class="w-50 mx-auto" action="/registersubmit" method="post" enctype="multipart/form-data">
+<form class="w-50 mx-auto form form-image-upload" action="/registersubmit" method="post"
+      enctype="multipart/form-data">
     <div class="form-group">
         <label for="thumbnail">Avatar</label>
-        <input type="file" class="type-text" id="avatar" name="avatar"
-               value="<?=session_get('old', 'first_name')?>">
-        <small class="form-text text-danger"><?=session_get('errors', 'first_name')?></small>
+        <input type="file" id="avatar" name="avatar" class="form-control-file">
+        <small class="form-text text-danger"><?=session_get('errors', 'avatar')?></small>
     </div>
     <div class="form-group">
         <label for="firstName">First Name</label>

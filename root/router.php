@@ -60,6 +60,13 @@ class router
                 middleware('auth');
                 $controllerName = "Auth";
                 break;
+            case 'details':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'allusers':
+                $controllerName = 'User';
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();
@@ -67,10 +74,11 @@ class router
 
     private function getAction()
     {
-        $uri = $_SERVER['REQUEST_URI'];
-        $path = explode('/', parse_url($uri, PHP_URL_PATH));
+        $url = $_SERVER['REQUEST_URI'];
+        $path = explode('/', parse_url($url, PHP_URL_PATH));
         $action = $path[1] ? strtolower($path[1]) : 'index';
+        $token = explode('token=', parse_url($url, PHP_URL_QUERY));
 
-        return $this->setController($action)->$action();
+        return $this->setController($action)->$action($token);
     }
 }
