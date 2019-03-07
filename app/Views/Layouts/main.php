@@ -37,12 +37,19 @@
         <?php endif; ?>
         <?php if(isAuth()): ?>
             <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link">
+                        Notifications
+                        <span class="badge badge-pill badge-success">5</span>
+                    </a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Profile
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/details">Details</a>
+                        <a class="dropdown-item" href="/friends">Friends</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item small" href="/deleteaccount">Delete account!</a>
                     </div>

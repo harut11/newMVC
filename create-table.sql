@@ -1,4 +1,3 @@
-
 CREATE TABLE images (
   id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -7,3 +6,8 @@ CREATE TABLE images (
   updated_at TIMESTAMP DEFAULT now(),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE friendspivot (
+  left_user_id INT(11) UNSIGNED,
+  right_user_id INT(11) UNSIGNED
+)

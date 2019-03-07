@@ -65,6 +65,19 @@ class router
                 $controllerName = 'User';
                 break;
             case 'allusers':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'showusers':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'friends':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'showfriends':
+                middleware('auth');
                 $controllerName = 'User';
                 break;
         }

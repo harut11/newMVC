@@ -29,6 +29,9 @@ class orm
         $condition = null;
         $condition = $this->addConditions($condition);
 
+        if (is_array($what)) {
+            $what = implode(', ', $what);
+        }
         $this->sql = "SELECT $what FROM " . $this->getTable() . $condition;
 
         return $this->execute();
@@ -77,6 +80,11 @@ class orm
         if (is_string($right)) {
             $right = "'$right'";
         }
+
+        if (is_array($right)) {
+            $right = "(" . implode(', ', $right) . ")";
+        }
+
         $this->where[] = " WHERE $left $operator $right";
         return $this;
     }

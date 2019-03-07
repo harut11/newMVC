@@ -6,11 +6,13 @@ class Viewer
 {
     private $page;
     private $title;
+    private $data;
 
-    public function __construct($page, $title)
+    public function __construct($page, $title, $data = [])
     {
         $this->page = $page;
         $this->title = $title;
+        $this->data = $data;
     }
 
     public function getPage()
@@ -30,6 +32,7 @@ class Viewer
     {
         if (file_exists($page)) {
             ob_start();
+            extract($this->data);
             require $page;
             return ob_get_clean();
         }

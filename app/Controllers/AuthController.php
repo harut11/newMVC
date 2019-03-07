@@ -64,7 +64,7 @@ class AuthController extends forValidation
         ]);
 
         $user = users::query()->where('email', '=', $_REQUEST['email'])
-            ->getAll();
+            ->get(['id', 'email_verified']);
         $user_avatar = images::query()->where('user_id', '=', $user[0]['id'])->get('name');
 
         if ($user[0] && $user[0]['email_verified'] === '') {
@@ -73,8 +73,12 @@ class AuthController extends forValidation
                 'access_token' => $token
             ]);
 
+            $user = users::query()->where('email', '=', $_REQUEST['email'])
+                ->get(['id', 'first_name', 'last_name', 'email', 'access_token', 'email_verified']);
+
             $_SESSION['user_details'] = $user[0];
             $_SESSION['user_avatar'] = $user_avatar[0];
+
             redirect('/');
         } else if($user[0] && $user[0]['email_verified'] !== '') {
             setcookie('must_verify', 'status', time() + 3600);

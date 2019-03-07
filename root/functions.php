@@ -12,8 +12,8 @@ function dd(...$vals) {
     exit();
 }
 
-function view($page, $title) {
-    $result = new \root\Viewer($page, $title);
+function view($page, $title, $data = []) {
+    $result = new \root\Viewer($page, $title, $data);
     $result->getPage();
 }
 
