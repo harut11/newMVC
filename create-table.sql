@@ -8,6 +8,11 @@ CREATE TABLE images (
 );
 
 CREATE TABLE friendspivot (
-  left_user_id INT(11) UNSIGNED,
-  right_user_id INT(11) UNSIGNED
-)
+  user_from INT(11) UNSIGNED,
+  user_to INT(11) UNSIGNED
+);
+
+CREATE TABLE requestpivot (
+  user_from INT(11) UNSIGNED,
+  user_to INT(11) UNSIGNED
+);

@@ -80,6 +80,10 @@ class router
                 middleware('auth');
                 $controllerName = 'User';
                 break;
+            case 'friendrequest':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();

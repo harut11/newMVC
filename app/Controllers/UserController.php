@@ -4,6 +4,7 @@ namespace app\Controllers;
 
 use app\Models\friendspivot;
 use app\Models\images;
+use app\Models\requestpivot;
 use app\Models\users;
 
 class UserController
@@ -36,5 +37,16 @@ class UserController
         $images = images::query()->getAll();
 
         return view('user.friends', 'Welcome to Your friends page', ['friends' => $friends, 'images' => $images]);
+    }
+
+    public function friendRequest()
+    {
+        if (isset($_POST['to']) && isset($_POST['from'])) {
+            requestpivot::query()->create([
+               'user_from' => $_POST['from'],
+               'user_to' => $_POST['to']
+            ]);
+            echo 'successfully created';
+        }
     }
 }
