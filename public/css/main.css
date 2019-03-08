@@ -7,6 +7,10 @@
   width: 50px;
 }
 
+#notifications {
+  min-width: 300px !important;
+}
+
 /* Users Section End */
 
 /*# sourceMappingURL=main.css.map */

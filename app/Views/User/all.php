@@ -16,10 +16,27 @@
                 <td><img alt="avatar" class="usersThumbnail" src="/public/uploads/<?=$imgName?>"></td>
                 <td><?=$user['first_name'] . ' ' . $user['last_name']?></td>
                 <td>
-                    <button type="button" class="btn btn-success" id="addFriend"
-                            onclick="project.sendFriendRequest(<?=$user['id']?>, <?=session_get('user_details', 'id')?>)">
-                        Add friend<i class="fas fa-user-plus ml-2"></i>
-                    </button>
+
+                    <?php foreach ($requests as $request): ?>
+                        <?php (isset($request['user_to']) && $request['user_to'] === $user['id']) ? $user_id = $request['user_to'] : null ?>
+                    <?php endforeach; ?>
+                    <?php foreach ($friends as $friend): ?>
+                        <?php (isset($friend['user_to']) && $friend['user_to'] === $user['id']) ? $friend_id = $friend['user_to'] : null ?>
+                    <?php endforeach; ?>
+
+                    <?php if (isset($user_id) && $user_id === $user['id']){ ?>
+                        <button type="button" class="btn btn-secondary disabled">
+                            Request sent<i class="fas fa-user-plus ml-2"></i>
+                        </button>
+                    <?php } else if (isset($friend_id) && $friend_id === $user['id']){ ?>
+                        <button type="button" class="btn btn-dark disabled">
+                            Friend<i class="fas fa-user-friends ml-2"></i>
+                        </button>
+                    <?php } else { ?>
+                        <button type="button" class="btn btn-success addFriend" data-action="<?=$user['id']?>">
+                            Add friend<i class="fas fa-user-plus ml-2"></i>
+                        </button>
+                    <?php } ?>
                 </td>
             </tr>
         <?php endif; ?>

@@ -84,6 +84,10 @@ class router
                 middleware('auth');
                 $controllerName = 'User';
                 break;
+            case 'notifications':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();

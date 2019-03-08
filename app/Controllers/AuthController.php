@@ -4,6 +4,7 @@ namespace app\Controllers;
 
 use app\Models\images;
 use app\Models\users;
+use app\Models\requestpivot;
 use root\forValidation;
 
 class AuthController extends forValidation
@@ -79,11 +80,11 @@ class AuthController extends forValidation
             $_SESSION['user_details'] = $user[0];
             $_SESSION['user_avatar'] = $user_avatar[0];
 
-            redirect('/');
+            return view('user.profile', 'Welcome to Your details page');
         } else if($user[0] && $user[0]['email_verified'] !== '') {
             setcookie('must_verify', 'status', time() + 3600);
         }
-        redirect('/login');
+        return redirect('/login');
     }
 
     public function verify($token)

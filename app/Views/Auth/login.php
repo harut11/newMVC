@@ -35,5 +35,5 @@
                value="<?=session_get('old', 'password')?>">
         <small class="form-text text-danger"><?=session_get('errors', 'password')?></small>
     </div>
-    <button type="submit" class="btn btn-info">Log In</button>
+    <button type="submit" class="btn btn-info" id="login">Log In</button>
 </form>
