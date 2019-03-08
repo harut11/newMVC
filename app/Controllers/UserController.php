@@ -51,7 +51,28 @@ class UserController
                'user_to' => $_GET['to']
             ]);
         }
+
+        if (isset($_GET['from']) && isset($_GET['approve'])) {
+            $user = session_get('user_details', 'id');
+
+            friendspivot::query()->create([
+                'user_from' => $_GET['from'],
+                'user_to' => $user
+            ]);
+
+            friendspivot::query()->create([
+                'user_from' => $user,
+                'user_to' => $_GET['from']
+            ]);
+
+            requestpivot::query()->where('user_from', '=', $_GET['from'])->delete();
+        }
     }
+
+//    public function approveRequest()
+//    {
+//
+//    }
 
     public function notifications()
     {
