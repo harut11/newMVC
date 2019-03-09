@@ -11,11 +11,11 @@
             <?php foreach ($images as $image): ?>
                 <?php if ($friend['id'] === $image['user_id']) {$imgName = $image['name'];} ?>
             <?php endforeach; ?>
-            <tr>
+            <tr class="item" data-id="<?=$friend['id']?>">
                 <td><img class="usersThumbnail" src="/public/uploads/<?=$imgName?>"></td>
                 <td><?=$friend['first_name'] . ' ' . $friend['last_name']?></td>
                 <td>
-                    <button type="button" class="btn btn-danger">Delete friend
+                    <button type="button" class="btn btn-danger deleteFriend">Delete friend
                         <i class="fas fa-user-minus ml-2"></i>
                     </button>
                 </td>

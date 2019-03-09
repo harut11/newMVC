@@ -5,7 +5,7 @@ namespace root\ORM;
 class orm
 {
     private $sql;
-    private $where = [];
+    private $where;
     private $order = [];
     private $offset;
 
@@ -63,14 +63,14 @@ class orm
             $sets .= "$column = $value";
         }
 
-        $this->sql = "UPDATE " . $this->getTable() . " SET " . $sets . implode(', ', $this->where);
+        $this->sql = "UPDATE " . $this->getTable() . " SET " . $sets . $this->where;
 
         return $this->execute();
     }
 
     public function delete()
     {
-        $this->sql = "DELETE FROM " . $this->getTable() . $this->where[0];
+        $this->sql = "DELETE FROM " . $this->getTable() . $this->where;
 
         return $this->execute();
     }
@@ -85,7 +85,35 @@ class orm
             $right = "(" . implode(', ', $right) . ")";
         }
 
-        $this->where[] = " WHERE $left $operator $right";
+        $this->where = " WHERE $left $operator $right";
+        return $this;
+    }
+
+    public function andWhere($left, $operator, $right)
+    {
+        if (is_string($right)) {
+            $right = "'$right'";
+        }
+
+        if (is_array($right)) {
+            $right = "(" . implode(', ', $right) . ")";
+        }
+
+        $this->where .= " AND $left $operator $right";
+        return $this;
+    }
+
+    public function orWhere($left, $operator, $right)
+    {
+        if (is_string($right)) {
+            $right = "'$right'";
+        }
+
+        if (is_array($right)) {
+            $right = "(" . implode(', ', $right) . ")";
+        }
+
+        $this->where .= " OR $left $operator $right";
         return $this;
     }
 
@@ -110,7 +138,7 @@ class orm
 
     public function addConditions($condition)
     {
-        !empty($this->where) ? $condition .= $this->where[0] : $condition .= '';
+        !empty($this->where) ? $condition .= $this->where : $condition .= '';
         !empty($this->order) ? $condition .= $this->order : $condition .= '';
         !empty($this->offset) ? $condition .= $this->offset : $condition .= '';
 

@@ -17,7 +17,7 @@ class UserController
     public function allUsers()
     {
         $user_id = session_get('user_details', 'id');
-        $users =  users::query()->getAll();
+        $users = users::query()->getAll();
         $images = images::query()->getAll();
         $requests = requestpivot::query()->where('user_from', '=', $user_id)->get('user_to');
         $friends = friendspivot::query()->where('user_from', '=', $user_id)->get('user_to');
@@ -45,11 +45,19 @@ class UserController
 
     public function friendRequest()
     {
-        if (isset($_GET['to'])) {
-            requestpivot::query()->create([
-               'user_from' => session_get('user_details', 'id'),
-               'user_to' => $_GET['to']
-            ]);
+        if (isset($_GET['to']) && isset($_GET['send_request'])) {
+            $user = session_get('user_details', 'id');
+            $sended = requestpivot::query()->where('user_from', '=', $_GET['to'])
+                ->andWhere('user_to', '=', $user)->getAll();
+
+            if (!$sended) {
+                requestpivot::query()->create([
+                    'user_from' => $user,
+                    'user_to' => $_GET['to']
+                ]);
+            } else {
+                echo 'false';
+            }
         }
 
         if (isset($_GET['from']) && isset($_GET['approve'])) {
@@ -65,14 +73,30 @@ class UserController
                 'user_to' => $_GET['from']
             ]);
 
-            requestpivot::query()->where('user_from', '=', $_GET['from'])->delete();
-        }
-    }
+            requestpivot::query()->where('user_from', '=', $_GET['from'])
+                ->andWhere('user_to', '=', $user)->delete();
 
-//    public function approveRequest()
-//    {
-//
-//    }
+            $newFriend = users::query()->where('id', '=', $_GET['from'])->getAll();
+            $avatar = images::query()->where('user_id', '=', $_GET['from'])->getAll();
+
+            echo json_encode(['newfriend' => $newFriend, 'avatar' => $avatar]);
+        }
+
+        if (isset($_GET['from']) && isset($_GET['cancel'])) {
+            requestpivot::query()->where('user_from', '=', $_GET['from'])
+                ->andWhere('user_to', '=', session_get('user_details', 'id'))->delete();
+        }
+
+        if (isset($_GET['to']) && isset($_GET['delete'])) {
+            $user = session_get('user_details', 'id');
+
+            friendspivot::query()->where('user_from', '=', $user)
+                ->andWhere('user_to', '=', $_GET['to'])->delete();
+            friendspivot::query()->where('user_from', '=', $_GET['to'])
+                ->andWhere('user_to', '=', $user)->delete();
+        }
+        return false;
+    }
 
     public function notifications()
     {
@@ -91,7 +115,6 @@ class UserController
 
                 echo json_encode(['users' => $users]);
             }
-            return false;
         }
         return false;
     }

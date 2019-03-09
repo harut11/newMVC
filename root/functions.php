@@ -2,14 +2,10 @@
 
 
 function dd(...$vals) {
-    if(is_array($vals)) {
-        foreach ($vals as $val) {
-            var_dump($val);
-            exit();
-        }
+    foreach ($vals as $val) {
+        var_dump($val);
+        exit();
     }
-    var_dump($vals);
-    exit();
 }
 
 function view($page, $title, $data = []) {

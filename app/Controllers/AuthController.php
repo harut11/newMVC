@@ -2,6 +2,7 @@
 
 namespace app\Controllers;
 
+use app\Models\friendspivot;
 use app\Models\images;
 use app\Models\users;
 use app\Models\requestpivot;
@@ -90,6 +91,7 @@ class AuthController extends forValidation
     public function verify($token)
     {
         if(isset($token)) {
+            $token = explode('token=', $token);
             $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
             if (!$user) {
@@ -118,8 +120,16 @@ class AuthController extends forValidation
     public function deleteaccount()
     {
         if((session_get('user_details', 'access_token'))) {
+            $user_id = session_get('user_details', 'id');
+
             unlink('public/uploads/' . get_avatar_name(session_get('user_details', 'id')));
+
             users::query()->where('email', '=', session_get('user_details', 'email'))->delete();
+            friendspivot::query()->where('user_from', '=', $user_id)
+                ->orWhere('user_to', '=', $user_id)->delete();
+            requestpivot::query()->where('user_from', '=', $user_id)
+                ->orWhere('user_to', '=', $user_id)->delete();
+
             session_unset();
             redirect('/');
         }

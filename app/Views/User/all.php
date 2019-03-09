@@ -12,7 +12,7 @@
             <?php foreach ($images as $image): ?>
                 <?php if ($user['id'] === $image['user_id']) {$imgName = $image['name'];} ?>
             <?php endforeach; ?>
-            <tr>
+            <tr class="item" data-id="<?=$user['id']?>">
                 <td><img alt="avatar" class="usersThumbnail" src="/public/uploads/<?=$imgName?>"></td>
                 <td><?=$user['first_name'] . ' ' . $user['last_name']?></td>
                 <td>
@@ -29,7 +29,7 @@
                             Request sent<i class="fas fa-user-plus ml-2"></i>
                         </button>
                     <?php } else if (isset($friend_id) && $friend_id === $user['id']){ ?>
-                        <button type="button" class="btn btn-dark disabled">
+                        <button type="button" class="btn btn-info disabled">
                             Friend<i class="fas fa-user-friends ml-2"></i>
                         </button>
                     <?php } else { ?>

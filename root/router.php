@@ -85,13 +85,8 @@ class router
                 $controllerName = 'User';
                 break;
             case 'notifications':
-                middleware('auth');
                 $controllerName = 'User';
                 break;
-//            case 'approverequest':
-//                middleware('auth');
-//                $controllerName = 'User';
-//                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();
@@ -102,7 +97,7 @@ class router
         $url = $_SERVER['REQUEST_URI'];
         $path = explode('/', parse_url($url, PHP_URL_PATH));
         $action = $path[1] ? strtolower($path[1]) : 'index';
-        $token = explode('token=', parse_url($url, PHP_URL_QUERY));
+        $token = parse_url($url, PHP_URL_QUERY);
 
         return $this->setController($action)->$action($token);
     }

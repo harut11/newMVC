@@ -20,7 +20,7 @@
     </tr>
     <tr>
         <th scope="row">Email</th>
-        <td><?=session_get('user_details', 'email')?></td>
+        <td id="user_email"><?=session_get('user_details', 'email')?></td>
     </tr>
     <tr>
         <td>
