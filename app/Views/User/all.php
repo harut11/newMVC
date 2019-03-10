@@ -12,18 +12,31 @@
             <?php foreach ($images as $image): ?>
                 <?php if ($user['id'] === $image['user_id']) {$imgName = $image['name'];} ?>
             <?php endforeach; ?>
+
             <tr class="item" data-id="<?=$user['id']?>">
+                <?php foreach ($requests as $request): ?>
+                    <?php (isset($request['user_to']) && $request['user_to'] === $user['id']) ? $user_id = $request['user_to'] : null ?>
+                <?php endforeach; ?>
+                <?php foreach ($friends as $friend): ?>
+                    <?php (isset($friend['user_to']) && $friend['user_to'] === $user['id']) ? $friend_id = $friend['user_to'] : null ?>
+                <?php endforeach; ?>
+
+                <?php if (isset($friend_id) && $user['id'] === $friend_id) { ?>
+                <td>
+                    <a class="forModal" href="/usershow?<?=$user['id']?>">
+                        <img alt="avatar" class="usersThumbnail" src="/public/uploads/<?=$imgName?>">
+                    </a>
+                </td>
+                <td>
+                    <a class="forModal" href="/usershow?<?=$user['id']?>">
+                        <?=$user['first_name'] . ' ' . $user['last_name']?>
+                    </a>
+                </td>
+                <?php } else { ?>
                 <td><img alt="avatar" class="usersThumbnail" src="/public/uploads/<?=$imgName?>"></td>
                 <td><?=$user['first_name'] . ' ' . $user['last_name']?></td>
+                <?php } ?>
                 <td>
-
-                    <?php foreach ($requests as $request): ?>
-                        <?php (isset($request['user_to']) && $request['user_to'] === $user['id']) ? $user_id = $request['user_to'] : null ?>
-                    <?php endforeach; ?>
-                    <?php foreach ($friends as $friend): ?>
-                        <?php (isset($friend['user_to']) && $friend['user_to'] === $user['id']) ? $friend_id = $friend['user_to'] : null ?>
-                    <?php endforeach; ?>
-
                     <?php if (isset($user_id) && $user_id === $user['id']){ ?>
                         <button type="button" class="btn btn-secondary disabled">
                             Request sent<i class="fas fa-user-plus ml-2"></i>

@@ -55,15 +55,16 @@ class orm
     public function update($data)
     {
         $sets = '';
+
         foreach ($data as $column => $value) {
             if (!is_int($value)) {
                 $value = "'$value'";
             }
 
-            $sets .= "$column = $value";
+            $sets .= "$column = $value, ";
         }
 
-        $this->sql = "UPDATE " . $this->getTable() . " SET " . $sets . $this->where;
+        $this->sql = "UPDATE " . $this->getTable() . " SET " . substr($sets, 0, -2) . $this->where;
 
         return $this->execute();
     }

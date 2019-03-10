@@ -87,6 +87,18 @@ class router
             case 'notifications':
                 $controllerName = 'User';
                 break;
+            case 'editsubmit':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'editdetails':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
+            case 'usershow':
+                middleware('auth');
+                $controllerName = 'User';
+                break;
         }
         $controller = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controller();

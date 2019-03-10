@@ -106,6 +106,20 @@ let project = {
                 user.remove();
             }
         })
+    },
+
+    imageReader: (event, div) => {
+        let preview = div,
+            file = event.target.files[0],
+            reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+            preview.attr('src', reader.result);
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
     }
 };
 
@@ -134,7 +148,7 @@ $(document).on('click', '.cancel', (event) => {
 });
 
 $(document).on('click', '.deleteFriend', (event) => {
-    if (confirm('Are you realy want to delete your friend ?')) {
+    if (confirm('Are you really want to delete your friend ?')) {
         let button = $(event.target),
             user_to = button.closest('.item').attr('data-id'),
             user = button.closest('.item');
@@ -142,4 +156,8 @@ $(document).on('click', '.deleteFriend', (event) => {
         project.deleteFriend(user_to, user);
     }
     return false;
+});
+
+document.getElementById('editAvatar').addEventListener('change', (event) => {
+    project.imageReader(event, $('#forShow'));
 });

@@ -1,14 +1,31 @@
 /* Users Section Start */
 #users .usersThumbnail {
   width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
 #friends .usersThumbnail {
   width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
 #notifications {
   min-width: 300px !important;
+}
+
+.forModal {
+  color: black;
+  text-decoration: none;
+}
+.forModal:hover {
+  color: black;
+  text-decoration: none;
+}
+
+.modalThumbnail {
+  width: 100%;
 }
 
 /* Users Section End */

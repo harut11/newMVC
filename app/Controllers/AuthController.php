@@ -81,7 +81,7 @@ class AuthController extends forValidation
             $_SESSION['user_details'] = $user[0];
             $_SESSION['user_avatar'] = $user_avatar[0];
 
-            return view('user.profile', 'Welcome to Your details page');
+            return redirect('/details');
         } else if($user[0] && $user[0]['email_verified'] !== '') {
             setcookie('must_verify', 'status', time() + 3600);
         }

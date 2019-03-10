@@ -12,8 +12,16 @@
                 <?php if ($friend['id'] === $image['user_id']) {$imgName = $image['name'];} ?>
             <?php endforeach; ?>
             <tr class="item" data-id="<?=$friend['id']?>">
-                <td><img class="usersThumbnail" src="/public/uploads/<?=$imgName?>"></td>
-                <td><?=$friend['first_name'] . ' ' . $friend['last_name']?></td>
+                <td>
+                    <a class="forModal" href="/usershow?<?=$friend['id']?>">
+                        <img alt="avatar" class="usersThumbnail" src="/public/uploads/<?=$imgName?>">
+                    </a>
+                </td>
+                <td>
+                    <a class="forModal" href="/usershow?<?=$friend['id']?>">
+                        <?=$friend['first_name'] . ' ' . $friend['last_name']?>
+                    </a>
+                </td>
                 <td>
                     <button type="button" class="btn btn-danger deleteFriend">Delete friend
                         <i class="fas fa-user-minus ml-2"></i>

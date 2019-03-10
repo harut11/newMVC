@@ -8,7 +8,7 @@ class Validation
 {
     public $errors = [];
 
-    public function __construct($request, $files, $rules)
+    public function __construct($request, $files = null, $rules)
     {
         foreach ($request as $field => $value) {
             if (isset($rules[$field])) {
@@ -83,7 +83,11 @@ class Validation
                 break;
             case 'img':
                 $imgType = explode('/', $_FILES['avatar']['type']);
-                return $imgType[0] === 'image';
+                return ($_FILES['avatar']['size'] !== 0 && $imgType[0] === 'image') || $_FILES['avatar']['size'] === 0;
+                break;
+            case 'updateUnique':
+                return !users::query()->where('id', '<>', session_get('user_details', 'id'))
+                    ->andWhere($field, '=', $value)->getAll();
                 break;
             default:
                 return true;
@@ -103,7 +107,8 @@ class Validation
             'unique' => 'The field must be unique value',
             'confirm' => 'Please enter a same password',
             'registered' => 'Email or password are written wrong',
-            'img' => 'Image format are not valid'
+            'img' => 'Image format are not valid',
+            'updateUnique' => 'The field must be unique value',
         ];
 
         if (isset($message[$rule])) {

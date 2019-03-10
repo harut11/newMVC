@@ -1,7 +1,7 @@
 <table class="table w-50 mx-auto">
     <thead class="thead-light">
     <tr>
-        <th scope="col">Your Details</th>
+        <th scope="col">User Profile</th>
     </tr>
     </thead>
     <tbody>
@@ -24,7 +24,3 @@
     </tr>
     </tbody>
 </table>
-
-<div class="editSection w-50 mx-auto mt-5">
-    <a href="/editdetails" class="btn btn-warning text-white">Edit details</a>
-</div>
