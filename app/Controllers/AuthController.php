@@ -51,7 +51,7 @@ class AuthController extends forValidation
 
             send_email($_REQUEST['email'], $token);
 
-            setcookie('username', $_REQUEST['first_name'], time() + 3600);
+            $_SESSION['username'] = $_REQUEST['first_name'];
 
             redirect('/login');
         }
@@ -83,7 +83,7 @@ class AuthController extends forValidation
 
             return redirect('/details');
         } else if($user[0] && $user[0]['email_verified'] !== '') {
-            setcookie('must_verify', 'status', time() + 3600);
+            $_SESSION['must_verify'] = 'status';
         }
         return redirect('/login');
     }
@@ -95,13 +95,13 @@ class AuthController extends forValidation
             $user = users::query()->where('email_verified', '=', $token[1])->getAll();
 
             if (!$user) {
-                setcookie('email_already_verified', 'true', time() + 3600);
+                $_SESSION['email_already_verified'] = 'true';
                 return redirect('/login');
             } else {
                 users::query()->where('email_verified', '=', $token[1])->update([
                     'email_verified' => null
                 ]);
-                setcookie('email_verified_success', 'true', time() + 3600);
+                $_SESSION['email_verified_success'] = 'true';
                 return redirect('/login');
             }
         }
@@ -124,11 +124,11 @@ class AuthController extends forValidation
 
             unlink('public/uploads/' . get_avatar_name(session_get('user_details', 'id')));
 
-            users::query()->where('email', '=', session_get('user_details', 'email'))->delete();
             friendspivot::query()->where('user_from', '=', $user_id)
                 ->orWhere('user_to', '=', $user_id)->delete();
             requestpivot::query()->where('user_from', '=', $user_id)
                 ->orWhere('user_to', '=', $user_id)->delete();
+            users::query()->where('email', '=', session_get('user_details', 'email'))->delete();
 
             session_unset();
             redirect('/');

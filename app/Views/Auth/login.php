@@ -1,22 +1,22 @@
-<?php if(cookie_get('username')) : ?>
+<?php if(session_get('username')) : ?>
     <div class="alert alert-success w-50 mx-auto" role="alert">
-        <?= $_COOKIE['username'] . " please verify your email before log in" ?>
+        <?= session_get('username') . " please verify your email before log in" ?>
     </div>
 <?php endif; ?>
 
-<?php if(cookie_get('must_verify')) : ?>
+<?php if(session_get('must_verify')) : ?>
     <div class="alert alert-danger w-50 mx-auto" role="alert">
         <?= "Your email is not verified" ?>
     </div>
 <?php endif; ?>
 
-<?php if(cookie_get('email_verified_success')) : ?>
+<?php if(session_get('email_verified_success')) : ?>
     <div class="alert alert-success w-50 mx-auto" role="alert">
         <?= "Your email is successfully verified" ?>
     </div>
 <?php endif; ?>
 
-<?php if(cookie_get('email_already_verified')) : ?>
+<?php if(session_get('email_already_verified')) : ?>
     <div class="alert alert-danger w-50 mx-auto" role="alert">
         <?= "Email is already verified" ?>
     </div>

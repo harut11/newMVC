@@ -3,14 +3,20 @@ let project = {
     friendsTable: $('#friends'),
     notiCount: null,
 
-    sendFriendRequest: (user_to, button) => {
+    sendFriendRequest: (user_to, button, action_space) => {
         $.ajax({
             url: '/friendrequest',
             method: "get",
             data: {to: user_to, send_request: 'true'},
             success: (data) => {
                 if (data === 'false') {
-                    alert('This user are sanded to you friend request, Please replace it!');
+                    let html = '<button class="btn btn-secondary approveFromUsers" type="button">Approve</button>' +
+                            '<button class="btn btn-secondary cancelFromUsers ml-2" type="button">Reject</button>';
+                    action_space.empty();
+                    action_space.append(html);
+
+                    return false;
+                } else if (data === 'sended') {
                     return false;
                 } else {
                     button.removeClass('btn-success').addClass('btn-secondary').addClass('disabled');
@@ -35,7 +41,7 @@ let project = {
                         html += '<div class="item row justify-content-between w-75 mx-auto mt-3" data-id="'+value.id+'">';
                         html += '<p class="col-12"><b>'+ value.first_name + ' ' + value.last_name + '</b> Want to be your friend</p>';
                         html += '<button type="button" class="btn btn-secondary col-5 approve">Approve</button>';
-                        html += '<button type="button" class="btn btn-secondary col-5 cancel">Cancel</button>';
+                        html += '<button type="button" class="btn btn-secondary col-5 cancel">Reject</button>';
                         html += '<div class="dropdown-divider"></div>';
                         html += '</div>';
                     });
@@ -59,8 +65,10 @@ let project = {
 
                 $.each(user, (key, value) => {
                     html += '<tr>';
-                    html += '<td><img alt="avatar" class="usersThumbnail" src="/public/uploads/'+ avatar[0].name +'"></td>';
-                    html += '<td>' + value.first_name + ' ' + value.last_name + '</td>';
+                    html += '<td><a class="forModal" href="/usershow?'+ user[0].id +'"><img alt="avatar" ' +
+                        'class="usersThumbnail" src="/public/uploads/'+ avatar[0].name +'"></a></td>';
+                    html += '<td><a class="forModal" href="/usershow?'+ user[0].id +'">' + value.first_name + ' '
+                        + value.last_name + '</a></td>';
                     html += '<td><button type="button" class="btn btn-danger">\n' +
                         'Delete friend<i class="fas fa-user-minus ml-2"></i></button></td>';
                     html += '</tr>';
@@ -71,28 +79,99 @@ let project = {
                 item.remove();
                 project.friendsTable.append(html);
 
-                let addButton = $('.addFriend');
+                let td = $('.actions');
 
-                $.each(addButton, (key, value) => {
-                    if (user[0].id === $(value).attr('data-action')) {
-                        $(value).removeClass('btn-success').addClass('btn-info').addClass('disabled');
+                $.each(td, (key, value) => {
+                    if ($(value).closest('.item').attr('data-id') === user[0].id) {
+                        let html = '<button type="button" class="btn btn-info disabled">' +
+                            'Friend<i class="fas fa-user-friends ml-2"></i></button>';
+
                         $(value).empty();
-                        $(value).html('Friend<i class="fas fa-user-friends ml-2"></i>');
-                        $(value).removeAttr('data-id');
-                        $(value).removeClass('addFriend');
+                        $(value).html(html);
+
+                        $(value).closest('.item').find('.forModal').attr('href', '/usershow?' + user[0].id);
                     }
                 });
             }
         })
     },
 
-    cancelRequest: (user_from) => {
+    approveFromAll: (user_from, item, action_space, a) => {
+        $.ajax({
+            url: '/friendrequest',
+            method: 'get',
+            data: {from: user_from, approve: 'true'},
+            success: () => {
+                let items = $('#notifications .item');
+
+                $.each(items, (key, value) => {
+                    if ($(value).attr('data-id') === item.attr('data-id')) {
+                        $(value).remove();
+                    }
+                });
+
+
+                project.notiCount -= 1;
+                $('#notcount').text(project.notiCount);
+
+                action_space.empty();
+
+                let html = '<button type="button" class="btn btn-info disabled">Friend' +
+                                '<i class="fas fa-user-friends ml-2"></i></button>';
+
+                a.attr('href', '/usershow?' + user_from);
+
+                action_space.html(html);
+            }
+        })
+    },
+
+    cancelFromAll: (user_from, item, action_space) => {
         $.ajax({
             url: '/friendrequest',
             method: 'get',
             data: {from: user_from, cancel: 'true'},
-            success: (data) => {
+            success: () => {
+                let items = $('#notifications .item'),
+                    html = '<button type="button" class="btn btn-success addFriend" data-action="'+ item.attr('data-id')
+                        +'">' + 'Add friend <i class="fas fa-user-plus ml-2"></i></button>';
 
+                $.each(items, (key, value) => {
+                    if ($(value).attr('data-id') === item.attr('data-id')) {
+                        $(value).remove();
+                    }
+                });
+
+                project.notiCount -= 1;
+                $('#notcount').text(project.notiCount);
+
+                action_space.empty();
+                action_space.html(html);
+            }
+        })
+    },
+
+    cancelRequest: (user_from, item) => {
+        $.ajax({
+            url: '/friendrequest',
+            method: 'get',
+            data: {from: user_from, cancel: 'true'},
+            success: () => {
+                item.remove();
+                project.notiCount -= 1;
+                $('#notcount').text(project.notiCount);
+
+                let td = $('.actions');
+
+                $.each(td, (key, value) => {
+                    if ($(value).closest('.item').attr('data-id') === user_from) {
+                        let html = '<button type="button" class="btn btn-success addFriend" data-action="'+user_from+'">' +
+                            'Add friend<i class="fas fa-user-plus ml-2"></i></button>';
+
+                        $(value).empty();
+                        $(value).html(html);
+                    }
+                });
             }
         })
     },
@@ -125,9 +204,10 @@ let project = {
 
 $(document).on('click', '.addFriend', (event) => {
     let button = $(event.target).closest('.addFriend'),
-        user_to = button.attr('data-action');
+        user_to = button.attr('data-action'),
+        action_space = $(event.target).closest('td');
 
-    project.sendFriendRequest(user_to, button);
+    project.sendFriendRequest(user_to, button, action_space);
 });
 
 project.showNotifications();
@@ -142,9 +222,10 @@ $(document).on('click', '.approve', (event) => {
 
 $(document).on('click', '.cancel', (event) => {
     let button = $(event.target),
-        user_from = button.closest('.item').attr('data-id');
+        user_from = button.closest('.item').attr('data-id'),
+        item = button.closest('.item');
 
-    project.cancelRequest(user_from);
+    project.cancelRequest(user_from, item);
 });
 
 $(document).on('click', '.deleteFriend', (event) => {
@@ -158,6 +239,29 @@ $(document).on('click', '.deleteFriend', (event) => {
     return false;
 });
 
-document.getElementById('editAvatar').addEventListener('change', (event) => {
-    project.imageReader(event, $('#forShow'));
+$(document).on('click', '.approveFromUsers', (event) => {
+    let button = $(event.target),
+        user_from = button.closest('.item').attr('data-id'),
+        item = button.closest('.item'),
+        action_space = button.closest('td'),
+        a = button.closest('.item').find('.forModal');
+
+    project.approveFromAll(user_from, item, action_space, a);
 });
+
+$(document).on('click', '.cancelFromUsers', (event) => {
+    let button = $(event.target),
+        user_from = button.closest('.item').attr('data-id'),
+        item = button.closest('.item'),
+        action_space = button.closest('td');
+
+    project.cancelFromAll(user_from, item, action_space);
+});
+
+let editAvatar = document.getElementById('editAvatar');
+
+if (editAvatar) {
+    editAvatar.addEventListener('change', (event) => {
+        project.imageReader(event, $('#forShow'));
+    });
+}

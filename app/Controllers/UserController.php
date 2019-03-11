@@ -48,7 +48,8 @@ class UserController extends forValidation
         $user_id = session_get('user_details', 'id');
         $users = users::query()->getAll();
         $images = images::query()->getAll();
-        $requests = requestpivot::query()->where('user_from', '=', $user_id)->get('user_to');
+        $requests = requestpivot::query()->where('user_to', '=', $user_id)
+            ->orWhere('user_from', '=', $user_id)->getAll();
         $friends = friendspivot::query()->where('user_from', '=', $user_id)->get('user_to');
 
         return view('user.all', 'Welcome to all users page', ['users' => $users, 'images' => $images,
@@ -78,14 +79,18 @@ class UserController extends forValidation
             $user = session_get('user_details', 'id');
             $sended = requestpivot::query()->where('user_from', '=', $_GET['to'])
                 ->andWhere('user_to', '=', $user)->getAll();
+            $friend = friendspivot::query()->where('user_from', '=', $user)
+                ->andWhere('user_to', '=', $_GET['to'])->getAll();
 
-            if (!$sended) {
+            if (!$sended && !$friend) {
                 requestpivot::query()->create([
                     'user_from' => $user,
                     'user_to' => $_GET['to']
                 ]);
-            } else {
+            } else if ($sended && !$friend) {
                 echo 'false';
+            } else if (!$sended && $friend) {
+                echo 'sended';
             }
         }
 

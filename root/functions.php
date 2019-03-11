@@ -91,23 +91,5 @@ function upload_image() {
 }
 
 function middleware($condition) {
-    switch ($condition) {
-        case 'guest':
-            if(!isAuth()) {
-                return true;
-            }
-            redirect('/');
-            return false;
-            break;
-        case 'auth':
-            if(isAuth()) {
-                return true;
-            }
-            redirect('/');
-            return false;
-            break;
-        default:
-            return false;
-            break;
-    }
+    return new \root\Middleware($condition);
 }
