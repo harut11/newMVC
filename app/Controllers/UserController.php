@@ -82,14 +82,14 @@ class UserController extends forValidation
             $friend = friendspivot::query()->where('user_from', '=', $user)
                 ->andWhere('user_to', '=', $_GET['to'])->getAll();
 
-            if (!$sended && !$friend) {
+            if (!$sended && !$friend && $user !== $_GET['to']) {
                 requestpivot::query()->create([
                     'user_from' => $user,
                     'user_to' => $_GET['to']
                 ]);
             } else if ($sended && !$friend) {
                 echo 'false';
-            } else if (!$sended && $friend) {
+            } else if (!$sended && $friend || $user === $_GET['to']) {
                 echo 'sended';
             }
         }
