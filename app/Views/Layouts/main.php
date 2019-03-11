@@ -52,7 +52,7 @@
                         <a class="dropdown-item" href="/details">Details</a>
                         <a class="dropdown-item" href="/friends">Friends</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item small" href="/deleteaccount">Delete account!</a>
+                        <a class="dropdown-item small text-danger" href="/deleteaccount">Delete account!</a>
                     </div>
                 </li>
                 <li class="nav-item">
